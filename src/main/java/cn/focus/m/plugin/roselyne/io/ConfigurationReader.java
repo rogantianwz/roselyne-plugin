@@ -8,5 +8,6 @@ import cn.focus.m.plugin.roselyne.descriptor.Config;
 
 public abstract interface ConfigurationReader {
 
+    //读取Roselyne的配置文件
     List<Config> readConfigurations(ConfigurationSource configurationSource) throws ConfigurationReadException, InvalidConfigurationException;
 }

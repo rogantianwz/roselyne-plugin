@@ -6,6 +6,12 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
 
+/**
+ * 获取配置文件的接口
+ * @author rogantian
+ * @date 2013-12-12
+ * @email rogantianwz@gmail.com
+ */
 public interface ConfigurationSource extends MessageHolder{
 
     /**

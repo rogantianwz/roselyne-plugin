@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+<fis>
+	<id>I'm a fake Id</id>
+	<name>I'm a fake Name</name>
+	<files>
+		<file>
+			<source>${basedir}/src/main/webapp/views/citySelect.jsp</source>
+			<release></release>
+			<output>${basedir}/target/out/webapp/views/citySelect.jsp</output>
+			<md5>false</md5>
+			<md5len>7</md5len>
+			<filtered>false</filtered>
+		</file>
+	</files>
+	<fileSets>
+		<fileSet>
+			<resolveImmeditely>true</resolveImmeditely>
+			<directory>${basedir}/src/main/webapp/views/</directory>
+			<includes>
+				<include>(.*?)\.jsp</include>
+			</includes>
+			<excludes>
+				<exclude>(.*?)citySelect\.jsp</exclude>
+			</excludes>
+			<output>${basedir}/target/out/webapp/views/$1.jsp</output>
+			<release></release>
+			<md5>false</md5>
+			<md5len>7</md5len>
+			<filtered>true</filtered>
+			<useDefaultExcludes>true</useDefaultExcludes>
+		</fileSet>
+		<fileSet>
+			<resolveImmeditely>false</resolveImmeditely>
+			<directory>http://10.10.90.156/sceapp/focus_static/wap/</directory>
+			<includes>
+				<include>(js/.*\.js)</include>
+				<include>(images/.*\.png)</include>
+				<include>(css/.*\.css)</include>
+			</includes>
+			<output>${basedir}\target\out\static\$1</output>
+			<release>http://192.168.52.128:8090/focus-static/pad/$1</release>
+			<md5>true</md5>
+		</fileSet>
+	</fileSets>
+</fis>

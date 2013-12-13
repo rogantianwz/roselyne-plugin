@@ -1,15 +1,8 @@
 package cn.focus.m.plugin.roselyne.mojos;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -53,13 +46,6 @@ public class Roselyne extends AbstractMojo implements ConfigurationSource, Resou
     //@Component
     private ConfigurationReader configReader;
     
-    private Log log;
-    
- // 定义script的正则表达式{或<script[^>]*?>[//s//S]*?<///script>
-    private static String REGEX_SCRIPT = "<[\\s]*?script[^>]*?><[\\s]*?/[\\s]*?script[\\s]*?>";
-    
-    private static Pattern PSCRIPT = Pattern.compile(REGEX_SCRIPT);
-    
     @Parameter(property="descriptor")
     protected String descriptor;
     
@@ -69,16 +55,16 @@ public class Roselyne extends AbstractMojo implements ConfigurationSource, Resou
     @Parameter(defaultValue="${localRepository}", required=true, readonly=true)
     private ArtifactRepository localRepository;
     
-    @Parameter(property="fis.ignoreMissingDescriptor", defaultValue="false")
+    @Parameter(property="ignoreMissingDescriptor", defaultValue="false")
     protected boolean ignoreMissingDescriptor;
     
-    @Parameter(property="fis.skipFIS", defaultValue="false")
-    private boolean skipFIS;
+    @Parameter(property="skip", defaultValue="false")
+    private boolean skip;
     
-    @Parameter(property="fis.runOnlyAtExecutionRoot", defaultValue="false")
+    @Parameter(property="runOnlyAtExecutionRoot", defaultValue="false")
     private boolean runOnlyAtExecutionRoot;
     
-    @Parameter(defaultValue="${project.basedir}\\target\\fis\\temp\\", required=true, readonly=true)
+    @Parameter(defaultValue="${project.basedir}\\target\\roselyne\\temp\\", required=true, readonly=true)
     private String tempDir;
     
     @Parameter(property="encoding")
@@ -86,50 +72,50 @@ public class Roselyne extends AbstractMojo implements ConfigurationSource, Resou
     
     public void execute() throws MojoExecutionException, MojoFailureException {
         long start = System.currentTimeMillis();
-        super.getLog().info("fis begin");
+        super.getLog().info("Roselyne begin");
         
-        if (this.skipFIS) {
+        if (this.skip) {
             
-            getLog().info("FIS have been skipped by parameter 'fis.skipFIS'");
+            getLog().info("Roselyne have been skipped by parameter 'roselyne.skip'");
             end(start);
             
         }
         
         if ((this.runOnlyAtExecutionRoot) && (!isThisTheExecutionRoot())) {
             
-          getLog().info("Skipping the FIS in this project because it's not the Execution Root");
+          getLog().info("Skipping the Roselyne in this project because it's not the Execution Root");
           end(start);
           
         }
         
-        List<Config> fisConfigs = null;
+        List<Config> configs = null;
         
-        super.getLog().info("fis start reader configuration");
+        super.getLog().info("roselyne start reader configuration");
         
         try {
             configReader = new DefaultConfigurationReader();
-            fisConfigs = configReader.readConfigurations(this);
+            configs = configReader.readConfigurations(this);
         } catch (ConfigurationReadException e) {
-            super.getLog().info("fis run error @ read configuration");
+            super.getLog().info("roselyne run error @ read configuration");
             end(start);
             throw new MojoExecutionException("Error reading assemblies: " + e.getMessage(), e);
             
         } catch (InvalidConfigurationException e) {
-            super.getLog().info("fis run error @ read configuration");
+            super.getLog().info("roselyne run error @ read configuration");
             end(start);
             throw new MojoFailureException(this.configReader, e.getMessage(), "Mojo configuration is invalid: " + e.getMessage());
             
         }
         
-        if (null != fisConfigs && fisConfigs.size() > 0) {
-            for (Config fisConfig : fisConfigs) {
-                getLog().info("FISConfig[" + fisConfig.getId() + "]\n\n" + fisConfig);
+        if (null != configs && configs.size() > 0) {
+            for (Config config : configs) {
+                getLog().info("Config[" + config.getId() + "]\n\n" + config);
             }
         } else {
-            getLog().info("fis run error @ Can not parse configuration");
+            getLog().info("roselyne run error @ Can not parse configuration");
         }
         
-        debug1(fisConfigs);
+        debug1(configs);
         
         ResourceAcquirerFactory resourceAcquirerFactory = new ResourceAcquirerFactory();
         ResourceResolver resourceResolver = new DefaultResourceResolver(resourceAcquirerFactory);
@@ -138,11 +124,11 @@ public class Roselyne extends AbstractMojo implements ConfigurationSource, Resou
         List<Resource> resources = new ArrayList<Resource>();
         List<MagicResource> magicResources = new ArrayList<MagicResource>();
         
-        for (Config fisConfig : fisConfigs) {
+        for (Config config : configs) {
             
             try {
-                List<Resource> rs = resourceResolver.resolve(fisConfig, this);
-                List<MagicResource> ms = resourceResolver.resolveMagic(fisConfig, this);
+                List<Resource> rs = resourceResolver.resolve(config, this);
+                List<MagicResource> ms = resourceResolver.resolveMagic(config, this);
                 
                 if (null != rs && rs.size() > 0) {
                     resources.addAll(rs); 
@@ -171,7 +157,7 @@ public class Roselyne extends AbstractMojo implements ConfigurationSource, Resou
     }
     
     protected void end(long start) {
-        StringBuilder info = new StringBuilder("Fis process complete, use ").append(System.currentTimeMillis() - start).append(" ms");
+        StringBuilder info = new StringBuilder("Roselyne process complete, use ").append(System.currentTimeMillis() - start).append(" ms");
         super.getLog().info(info);
     }
     
@@ -220,86 +206,13 @@ public class Roselyne extends AbstractMojo implements ConfigurationSource, Resou
      * 测试fisConfig
      * @param fisConfigs
      */
-    protected void debug1(List<Config> fisConfigs) {
-        if (null != fisConfigs && fisConfigs.size() > 0) {
-            Config config = fisConfigs.get(0);
+    protected void debug1(List<Config> configs) {
+        if (null != configs && configs.size() > 0) {
+            Config config = configs.get(0);
             String directory = config.getFileSets().get(0).getDirectory();
             super.getLog().info("directory:" + directory);
             
         }
-    }
-    
-    public void doExecute() throws MojoExecutionException, MojoFailureException {
-        // TODO Auto-generated method stub
-        log = super.getLog();
-        if (null == project) {
-            log.error("The MavenProject is null");
-            return;
-        }
-        log.info("begin fis");
-        File baseDir = project.getBasedir();
-        File webappDir = new File(baseDir.getAbsolutePath() + "/src/main/webapp");
-        List<File> files = new ArrayList<File>();
-        itDirRecursion(webappDir, files);
-        
-        if (files.size() > 0) {
-            log.info("the files to fis list:"); 
-            for (File f : files) {
-                log.info(f.getAbsolutePath());
-            }
-        } else {
-            log.info("no file to fis");
-        }
-        
-        for (File f : files) {
-            BufferedReader br = null;
-            try {
-                FileReader fr = new FileReader(f);
-                br = new BufferedReader(fr);
-                StringBuffer sb = new StringBuffer();
-                String line = br.readLine();
-                while (null != line) {
-                    sb.append(line);
-                    line = br.readLine();
-                }
-                Matcher matcher = PSCRIPT.matcher(sb);
-                boolean matched = matcher.find();
-                while (matched) {
-                    log.info("Matched script ele @" + f.getName() + ":"+ matcher.group());
-                    matched = matcher.find();
-                }
-                
-            } catch (FileNotFoundException e) {
-                log.error("", e);
-            } catch (Exception e) {
-                log.error("", e);
-            } finally {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    log.error("", e);
-                }
-            }
-        }
-    }
-    
-    private void itDirRecursion(File dir, List<File> files) {
-        if (!dir.exists() || !dir.isDirectory()) {
-            return;
-        }
-        
-        File[] fs = dir.listFiles();
-        for (File f : fs) {
-            if (f.isDirectory()) {
-                itDirRecursion(f, files);
-            } else if (f.getName().endsWith("jsp")){
-                files.add(f);
-            } else {
-                log.info("ignore file: " + f.getAbsolutePath());
-            }
-        }
-        
-        
     }
     
     public void addMessage(MessageType type, String content) {

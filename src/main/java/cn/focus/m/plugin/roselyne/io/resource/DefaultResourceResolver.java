@@ -29,11 +29,11 @@ public class DefaultResourceResolver implements ResourceResolver {
         this.resourceAcquirerFactory = resourceAcquirerFactory;
     }
 
-    public List<Resource> resolve(Config fisConfig, ResourceResolveSupport support) throws ResourceResolveException {
+    public List<Resource> resolve(Config config, ResourceResolveSupport support) throws ResourceResolveException {
         List<Resource> resources = new ArrayList<Resource>();
         try {
-            resolveFileSets(fisConfig, support, resources);
-            resolveFiles(fisConfig, support, resources);
+            resolveFileSets(config, support, resources);
+            resolveFiles(config, support, resources);
         } catch (ResourceInvalidException e) {
             throw new ResourceResolveException(e);
         } catch (ResourceNotFoundException e) {
@@ -45,8 +45,8 @@ public class DefaultResourceResolver implements ResourceResolver {
     }
     
     /**
-     * 从fisConfig中获取所有FileSet的资源(只获取resolveImmeditely=true的资源)
-     * @param fisConfig
+     * 从config中获取所有FileSet的资源(只获取resolveImmeditely=true的资源)
+     * @param config
      * @param support
      * @param resources
      * @return
@@ -55,11 +55,10 @@ public class DefaultResourceResolver implements ResourceResolver {
      * @throws ResourceInvalidException 
      * @throws IOException 
      */
-    protected void resolveFileSets(Config fisConfig, ResourceResolveSupport support, 
+    protected void resolveFileSets(Config config, ResourceResolveSupport support, 
             List<Resource> resources) throws ResourceResolveException, ResourceInvalidException, ResourceNotFoundException, IOException {
-        List<SourceFileSet> fileSets = fisConfig.getFileSets();
-        List<SourceFile> files = fisConfig.getFiles();
-        if (null == fileSets && null == files) {
+        List<SourceFileSet> fileSets = config.getFileSets();
+        if (null == fileSets) {
             return;
         }
         
@@ -77,17 +76,17 @@ public class DefaultResourceResolver implements ResourceResolver {
     }
     
     /**
-     * 从fisConfig中获取所有files的资源
-     * @param fisConfig
+     * 从config中获取所有files的资源
+     * @param config
      * @param support
      * @param resources
      * @throws ResourceInvalidException
      * @throws ResourceNotFoundException
      * @throws IOException 
      */
-    protected void resolveFiles(Config fisConfig, ResourceResolveSupport support, 
+    protected void resolveFiles(Config config, ResourceResolveSupport support, 
             List<Resource> resources) throws ResourceInvalidException, ResourceNotFoundException, IOException {
-        List<SourceFile> files = fisConfig.getFiles();
+        List<SourceFile> files = config.getFiles();
         if (null == files || files.size() == 0) {
             return;
         }

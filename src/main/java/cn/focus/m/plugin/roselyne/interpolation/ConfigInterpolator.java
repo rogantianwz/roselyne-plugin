@@ -32,6 +32,12 @@ import cn.focus.m.plugin.roselyne.descriptor.Config;
 import cn.focus.m.plugin.roselyne.utils.RoselyneFileUtils;
 import cn.focus.m.plugin.roselyne.utils.InterpolationConstants;
 
+/**
+ * 变量替换器
+ * @author rogantian
+ * @date 2013-12-12
+ * @email rogantianwz@gmail.com
+ */
 public class ConfigInterpolator extends AbstractLogEnabled {
 
     private static final Set<String> INTERPOLATION_BLACKLIST;
@@ -53,7 +59,7 @@ public class ConfigInterpolator extends AbstractLogEnabled {
     }
 
     @SuppressWarnings("unchecked")
-    public Config interpolate(Config fisConfig, MavenProject project, ConfigurationSource configurationSource)
+    public Config interpolate(Config config, MavenProject project, ConfigurationSource configurationSource)
             throws ConfigInterpolationException {
 
         Set<String> blacklistFields = new HashSet<String>(FieldBasedObjectInterpolator.DEFAULT_BLACKLISTED_FIELD_NAMES);
@@ -71,9 +77,9 @@ public class ConfigInterpolator extends AbstractLogEnabled {
                 true);
 
         try {
-            objectInterpolator.interpolate(fisConfig, interpolator, interceptor);
+            objectInterpolator.interpolate(config, interpolator, interceptor);
         } catch (InterpolationException e) {
-            throw new ConfigInterpolationException("Failed to interpolate fisConfig with ID: " + fisConfig.getId()
+            throw new ConfigInterpolationException("Failed to interpolate fisConfig with ID: " + config.getId()
                     + ". Reason:" + e.getMessage(), e);
         } finally {
             interpolator.clearAnswers();
@@ -83,7 +89,7 @@ public class ConfigInterpolator extends AbstractLogEnabled {
             StringBuilder sb = new StringBuilder();
 
             sb.append("One or more minor errors occurred while interpolating the fisConfig with ID: "
-                    + fisConfig.getId() + ":\n");
+                    + config.getId() + ":\n");
 
             List<ObjectInterpolationWarning> warnings = objectInterpolator.getWarnings();
             for (Iterator<ObjectInterpolationWarning> it = warnings.iterator(); it.hasNext();) {
@@ -97,7 +103,7 @@ public class ConfigInterpolator extends AbstractLogEnabled {
             getLogger().debug(sb.toString());
         }
 
-        return fisConfig;
+        return config;
     }
 
     public static Interpolator buildInterpolator(MavenProject project, ConfigurationSource configurationSource) {

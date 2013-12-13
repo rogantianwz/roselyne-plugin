@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+	<groupId>cn.focus.m.plugin</groupId>
+	<artifactId>roselyne-maven-plugin</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<configuration>
+		<descriptor>src/main/roselyne/config-demo.xml</descriptor>
+		<encoding>UTF-8</encoding>
+		<compressarg>-v</compressarg>
+		<tempDir>${project.basedir}/target/roselyne/temp/</tempDir>
+	</configuration>
+</plugin>

@@ -42,30 +42,31 @@ public class DefaultConfigurationReader extends AbstractLogEnabled
         strategies.add(new RelativeFileLocatorStrategy(configurationSource.getBaseDir()));
         strategies.add(new FileLocatorStrategy());
         
-        List<Config> fisConfigs = new ArrayList<Config>();
+        List<Config> configs = new ArrayList<Config>();
         
+        //TODO:可以支持多个descriptor文件，目前只支持了一个
         String descriptor = configurationSource.getDescriptor();
         
         if (null != descriptor) {
             locator.setStrategies(strategies);
-            addConfigurationFromDescriptor(descriptor, locator, configurationSource, fisConfigs);
+            addConfigurationFromDescriptor(descriptor, locator, configurationSource, configs);
         }
         
-        return fisConfigs;
+        return configs;
     }
                
     private Config addConfigurationFromDescriptor(String descriptor, Locator locator, 
-            ConfigurationSource configurationSource, List<Config> fisConfigs) 
+            ConfigurationSource configurationSource, List<Config> configs) 
                     throws ConfigurationReadException, InvalidConfigurationException{
         
         Location location = locator.resolve(descriptor);
         
         if (null == location) {
             if (configurationSource.isIgnoreMissingDescriptor()) {
-                getLog().debug("Ignoring missing fisConfig descriptor with ID '" + descriptor + "'\n\n");
+                getLog().debug("Ignoring missing config descriptor with ID '" + descriptor + "'\n\n");
                 return null;
             } else {
-                throw new ConfigurationReadException("Error locating fisConfig descriptor: " + descriptor + "\n\n");
+                throw new ConfigurationReadException("Error locating config descriptor: " + descriptor + "\n\n");
             }
         }
         
@@ -78,13 +79,13 @@ public class DefaultConfigurationReader extends AbstractLogEnabled
               dir = location.getFile().getParentFile();
           }
           
-          Config fisConfig = readFISConfig(reader, descriptor, dir, configurationSource);
+          Config config = readConfig(reader, descriptor, dir, configurationSource);
           
-          fisConfigs.add(fisConfig);
+          configs.add(config);
           
-          Config fisConfigLocal = fisConfig;
+          Config configLocal = config;
           
-          return fisConfigLocal;
+          return configLocal;
         } catch (IOException e) {
             throw new ConfigurationReadException("Error reading fisConfig descriptor : '" + descriptor + "'\n\n", e);
         } catch (XStreamException e) {
@@ -94,23 +95,23 @@ public class DefaultConfigurationReader extends AbstractLogEnabled
         }
     }
     
-    private Config readFISConfig(Reader reader, String locationDescription, File fisConfigDir, 
+    private Config readConfig(Reader reader, String locationDescription, File configDir, 
             ConfigurationSource configurationSource) throws ConfigurationReadException {
         MavenProject project = configurationSource.getProject();
         
-        Config fisConfig = null;
+        Config config = null;
         try {
             StaxDriver staxDriver = new StaxDriver(new NoNameCoder());
             XStream stream = new XStream(staxDriver);
             
             stream.processAnnotations(Config.class);
-            fisConfig = (Config) stream.fromXML(reader);
+            config = (Config) stream.fromXML(reader);
             
-            debugPringFisConfig("Before fisCofing is interpolated:", fisConfig);
+            debugPringConfig("Before cofing is interpolated:", config);
             
-            fisConfig = new ConfigInterpolator().interpolate(fisConfig, project, configurationSource);
+            config = new ConfigInterpolator().interpolate(config, project, configurationSource);
             
-            debugPringFisConfig("After fisCofing is interpolated:", fisConfig);
+            debugPringConfig("After cofing is interpolated:", config);
         } catch (XStreamException e) {
             throw new ConfigurationReadException("Error Read descriptor: " + locationDescription + ": " + e.getMessage(), e);
         } catch (ConfigInterpolationException e) {
@@ -118,10 +119,10 @@ public class DefaultConfigurationReader extends AbstractLogEnabled
         } finally {
             IOUtil.close(reader);
         }
-        return fisConfig;
+        return config;
     }
     
-    private void debugPringFisConfig(String message, Config fisConfig) {
+    private void debugPringConfig(String message, Config fisConfig) {
         getLog().debug(message + "\n\n" + fisConfig.toString() + "\n\n");
     }
     
@@ -129,7 +130,7 @@ public class DefaultConfigurationReader extends AbstractLogEnabled
         Logger logger = super.getLogger();
         
         if (null == logger) {
-            logger = new ConsoleLogger(1, "defaultFisConfigruationReader");
+            logger = new ConsoleLogger(1, "defaultConfigruationReader");
             enableLogging(logger);
         }
         

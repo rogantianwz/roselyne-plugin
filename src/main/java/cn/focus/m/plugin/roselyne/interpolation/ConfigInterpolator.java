@@ -17,6 +17,7 @@ import org.codehaus.plexus.interpolation.Interpolator;
 import org.codehaus.plexus.interpolation.PrefixAwareRecursionInterceptor;
 import org.codehaus.plexus.interpolation.PrefixedObjectValueSource;
 import org.codehaus.plexus.interpolation.PrefixedPropertiesValueSource;
+import org.codehaus.plexus.interpolation.PrefixedValueSourceWrapper;
 import org.codehaus.plexus.interpolation.PropertiesBasedValueSource;
 import org.codehaus.plexus.interpolation.RecursionInterceptor;
 import org.codehaus.plexus.interpolation.StringSearchInterpolator;
@@ -156,6 +157,9 @@ public class ConfigInterpolator extends AbstractLogEnabled {
         interpolator.addValueSource(new PropertiesBasedValueSource(commandLineProperties));
         interpolator.addValueSource(new PrefixedPropertiesValueSource(Collections.singletonList("env."),
                 ENVIRONMENT_VARIABLES, true));
+        
+        //解析配置文件中的时间格式表达式（如：ft：yyyy-MM-dd）
+        interpolator.addValueSource(new PrefixedValueSourceWrapper(new TimeFormatValueSource(false), "ft:", false));
 
         interpolator.addPostProcessor(new PathTranslatingPostProcessor(project.getBasedir()));
 

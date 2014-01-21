@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 public class StyleResourceProcessor extends AbstractResourceProcessor {
     
-    private static String STYLE_URL = "\\burl\\s*?\\(\\s*([\\w:\\/\\\\\\.]+)\\s*?\\)";
+    private static String STYLE_URL = "\\burl\\s*?\\(\\s*([-\\w:\\/\\\\\\.]+)\\s*?\\)";
     
     /**
      * 查找类似<script>....."url(http://10.10.90.156/sceapp/focus_static/wap/images/213.png)"......</script>中的url，

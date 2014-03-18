@@ -10,6 +10,8 @@ public class Resource {
     
     private String outputAddr;
     
+    private String fetchAddr;
+    
     private File tempAddr;
     
     private boolean md5;
@@ -111,18 +113,26 @@ public class Resource {
         this.md5 = md5;
     }
 
-    @Override
-    public String toString() {
-        return "Resource [sourceAddr=" + sourceAddr + ", releaseAddr=" + releaseAddr + ", outputAddr=" + outputAddr
-                + ", tempAddr=" + tempAddr + ", md5=" + md5 + ", md5len=" + md5len + ", temp=" + temp + ", done="
-                + done + "]";
-    }
-
     public String getVersionCode() {
         return versionCode;
     }
 
     public void setVersionCode(String versionCode) {
         this.versionCode = versionCode;
+    }
+
+    public String getFetchAddr() {
+        return fetchAddr;
+    }
+
+    public void setFetchAddr(String fetchAddr) {
+        this.fetchAddr = fetchAddr;
+    }
+
+    @Override
+    public String toString() {
+        return "Resource [sourceAddr=" + sourceAddr + ", releaseAddr=" + releaseAddr + ", outputAddr=" + outputAddr
+                + ", fetchAddr=" + fetchAddr + ", tempAddr=" + tempAddr + ", md5=" + md5 + ", md5len=" + md5len
+                + ", temp=" + temp + ", done=" + done + ", versionCode=" + versionCode + "]";
     }
 }

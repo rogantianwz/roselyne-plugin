@@ -272,6 +272,7 @@ public abstract class AbstractResourceProcessor implements ResourceProcessor{
             String outputAddr = magicResource.getOutputAddr();
             String releaseAddr = magicResource.getReleaseAddr();
             //String tempAddr = magicResource.getTempAddr().getAbsolutePath();
+            String fetchAddr = magicResource.getFetchAddr();
             
             Matcher matcher= matchedPattern.matcher(sourceAddr);
             
@@ -289,6 +290,11 @@ public abstract class AbstractResourceProcessor implements ResourceProcessor{
             
             resource.setReleaseAddr(matcher.replaceAll(releaseAddr).replaceAll("\\\\", "\\\\\\\\"));
             //resource.setTempAddr(new File(matcher.replaceAll(tempAddr)));
+            
+            if (StringUtils.isNotBlank(fetchAddr)) {
+                resource.setFetchAddr(matcher.replaceAll(fetchAddr).replaceAll("\\\\", "\\\\\\\\"));
+            }
+            
             return resource;
         }
     }
@@ -308,7 +314,14 @@ public abstract class AbstractResourceProcessor implements ResourceProcessor{
         
         ResourceAcquirer resourceAcquire = resourceAcquirerFactory.getResourceAcquirer(reference.getSourceAddr());
         
-        File file = resourceAcquire.acquireResource(resource.getSourceAddr(), resourceResolveSupport.getTempDir());
+        String acquireFrom;
+        if (StringUtils.isNotBlank(resource.getFetchAddr())) {
+            acquireFrom = resource.getFetchAddr();
+        } else {
+            acquireFrom = resource.getSourceAddr();
+        }
+        
+        File file = resourceAcquire.acquireResource(acquireFrom, resourceResolveSupport.getTempDir());
         resource.setTempAddr(file);
         return resource;
     }

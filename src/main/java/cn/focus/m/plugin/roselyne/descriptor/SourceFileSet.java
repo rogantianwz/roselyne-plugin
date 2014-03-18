@@ -34,6 +34,9 @@ public class SourceFileSet {
     
     @XStreamAlias("resolveImmeditely")
     private boolean resolveImmeditely = true;
+    
+    @XStreamAlias("fetch")
+    private String fetch;
 
     public String getDirectory() {
         return directory;
@@ -115,12 +118,20 @@ public class SourceFileSet {
         this.resolveImmeditely = resolveImmeditely;
     }
 
+    public String getFetch() {
+        return fetch;
+    }
+
+    public void setFetch(String fetch) {
+        this.fetch = fetch;
+    }
+
     @Override
     public String toString() {
-        return "FISSourceFileSet [directory=" + directory + ", excludes=" + excludes + ", filtered=" + filtered
+        return "SourceFileSet [directory=" + directory + ", excludes=" + excludes + ", filtered=" + filtered
                 + ", includes=" + includes + ", outpout=" + outpout + ", release=" + release + ", useDefaultExcludes="
                 + useDefaultExcludes + ", md5=" + md5 + ", md5len=" + md5len + ", resolveImmeditely="
-                + resolveImmeditely + "]";
+                + resolveImmeditely + ", fetch=" + fetch + "]";
     }
     
     

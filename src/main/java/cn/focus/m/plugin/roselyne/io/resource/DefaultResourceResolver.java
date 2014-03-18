@@ -437,6 +437,11 @@ public class DefaultResourceResolver implements ResourceResolver {
                     mr.setReleaseAddr(new String(release));
                 }
                 
+                String fetch = fileSet.getFetch();
+                if(StringUtils.isNotBlank(fetch)) {
+                    mr.setFetchAddr(new String(fetch));
+                }
+                
                 String directory = fileSet.getDirectory();
                 if (StringUtils.isBlank(directory)) {
                     directory = "";

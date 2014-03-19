@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Random;
 
 public class HttpResourceAcquirer implements ResourceAcquirer {
 
@@ -30,7 +31,7 @@ public class HttpResourceAcquirer implements ResourceAcquirer {
             } else {
                 input = new BufferedInputStream(conn.getInputStream());
                 File outputDir = new File(tempDir);
-                outputFile = new File(outputDir, String.valueOf(System.currentTimeMillis()));
+                outputFile = new File(outputDir, String.valueOf(System.currentTimeMillis() + new Random().nextInt()));
                 output = new BufferedOutputStream(new FileOutputStream(outputFile));
                 byte[] buffer = new byte[1024];
                 int num = -1;

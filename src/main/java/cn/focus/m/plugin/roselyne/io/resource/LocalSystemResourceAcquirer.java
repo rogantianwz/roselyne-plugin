@@ -1,6 +1,7 @@
 package cn.focus.m.plugin.roselyne.io.resource;
 
 import java.io.File;
+import java.util.Random;
 
 import org.codehaus.plexus.util.FileUtils;
 
@@ -13,7 +14,7 @@ public class LocalSystemResourceAcquirer implements ResourceAcquirer {
         }
         File outputDir = new File(tempDir);
         outputDir.mkdirs();
-        File outputFile = new File(outputDir, String.valueOf(System.currentTimeMillis()));
+        File outputFile = new File(outputDir, String.valueOf(System.currentTimeMillis() + new Random().nextInt()));
         try {
             FileUtils.copyFile(new File(resourceName), outputFile);
         } catch (Exception e) {

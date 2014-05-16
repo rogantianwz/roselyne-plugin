@@ -236,6 +236,66 @@ public final class RoselyneFileUtils {
     }
     
     /**
+     * 如果targetPath是相对路径的话，返回其相对于currentPath的绝对路径，这里所说的路径仅指url路径
+     * @param currentPath
+     * @param relativePaht
+     * @return
+     */
+    public static String normalizPathIfNeed(String currentPath, String targetPath) {
+        if(targetPath.startsWith("http://") || targetPath.startsWith("/")) {
+            return targetPath;
+        }
+        return tranRelativePathToAbsolutePath(currentPath, targetPath);
+    }
+    
+    /**
+     * 将相对路径转换为绝对路径，i.e http://www.baidu.com/a/b/1.jpg and ../../2.css  --》 http://www.baidu.com/2.css，这里所说的路径仅指url路径
+     * @param currentPath 该路径必须是绝对路径，这里以"http://"开头作为判断
+     * @param relativePath
+     * @return
+     */
+    public static String tranRelativePathToAbsolutePath(String currentPath, String relativePath) {
+        if (!currentPath.startsWith("http://")) {
+            return null;
+        }
+        String path = null;
+        int index = currentPath.lastIndexOf('/');
+        if (index > 0) {
+            path = currentPath.substring(0,index+1) + relativePath;
+        } else {
+            path = currentPath + relativePath;
+        }
+        
+        while ( true )
+        {
+            int loc = path.indexOf( "/./" );
+            if ( loc < 0 )
+            {
+                break;
+            }
+            path = path.substring( 0, loc ) + path.substring( loc + 2 );
+        }
+
+        // Resolve occurrences of "/../" in the normalized path
+        while ( true )
+        {
+            int loc = path.indexOf( "/../" );
+            if ( loc < 0 )
+            {
+                break;
+            }
+            if ( loc == 0 )
+            {
+                return null;  // Trying to go outside our context
+            }
+            int index2 = path.lastIndexOf( '/', loc - 1 );
+            path = path.substring( 0, index2 ) + path.substring( loc + 3 );
+        }
+        
+        return path;
+    }
+    
+    /**
      * 测试makeAbsolutePath(...)方法
      * @param args
      */
@@ -252,9 +312,25 @@ public final class RoselyneFileUtils {
      * 测试addSuffixBeforeExtension
      * @param args
      */
-    public static void main(String[] args) {
+    public static void main3(String[] args) {
         String ret = RoselyneFileUtils.addSuffixBeforeExtension("http://www.baidu.com/abc.jpg", "121212121");
         System.out.println(ret);
+    }
+    
+    /**
+     * 测试normalizPathIfNeed方法
+     * @param args
+     */
+    public static void main(String[] args) {
+        /*String currentPath = "http://www.baidu.com/a/b/1.jpg";
+        String relativePath = "../../2.css";*/
+        String currentPath = "http://include.aifcdn.com/touchweb/2014_20_03_1/base/css/Base.css";
+        //String relativePath = "../../touch/img/base_i_s.png";
+        //String relativePath = "touch/img/base_i_s.png";
+        //String relativePath = "/img/base_i_s.png";
+        //String relativePath = "./img/base_i_s.png";
+        String relativePath = "http://www.baidu.com/img/base_i_s.png";
+        System.out.println(normalizPathIfNeed(currentPath, relativePath));
     }
     
 }

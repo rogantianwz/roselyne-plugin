@@ -108,7 +108,8 @@ Set<Reference> ret = new HashSet<Reference>();
     
     private void searchUrl(MR mr, String sourceAddr, Map<String, Reference> refs) {
         SG urlContent = mr.getUrlContent();
-        Reference ref = new Reference(urlContent.getContent(), urlContent.getStart(), urlContent.getEnd(), false);
+        String url = RoselyneFileUtils.normalizPathIfNeed(sourceAddr, urlContent.getContent());
+        Reference ref = new Reference(url, urlContent.getStart(), urlContent.getEnd(), false);
         addReference(refs, ref);
     }
     

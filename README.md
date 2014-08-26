@@ -8,3 +8,6 @@
 + requirejs的配置文件在script标签的data-main属性中定义。
 + requirejs的配置文件中paths模块的key-valve对的valve不能以".js"结尾，也不能以'/'开头，也不能是目录。
 + requirejs所需的模块都必须在paths中声明。
+
+### js相关
++ 如果引用的js库是压缩过的话则引用该库的时候需要加上".min"标识，如：zepto-1.1.3.min.js

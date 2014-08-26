@@ -5,6 +5,12 @@ import cn.focus.m.plugin.roselyne.io.resource.Resource;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * “引用”，只某一个文件中对静态资源的“引用”,这个引用有一个隐含的字段，即它所属的那个文件，抛开文件谈“引用”是毫无意义的。
+ * @author rogantian
+ * @date 2014-8-21
+ * @email rogantianwz@gmail.com
+ */
 public class Reference {
     
     public class Bound implements Comparable<Bound> {
@@ -87,12 +93,28 @@ public class Reference {
         }
     }
     
+    /**
+     * 该引用所指向的静态资源的地址，形如<script src="abc.js" />中的abc.js
+     */
     private String sourceAddr;
 
+    /**
+     * 根据配置文件的配置生成的该引用的“资源”对象，包含了资源的原始地址，输出地址，发布地址等
+     */
     private Resource resource;
     
     private boolean temp;
     
+    /**
+     * 标明该引用是否是一个requesjs的data-main资源
+     */
+    private boolean requirejsDataMain = false;
+    
+    private String requiredCfgPathKey;
+    
+    /**
+     * 该引用在所属的文件中所处的位置
+     */
     private Set<Bound> bounds;
 
     public Reference(String sourceAddr, int boundStart, int boundEnd, boolean temp) {
@@ -106,6 +128,20 @@ public class Reference {
         
         bounds.add(b);
     }
+    
+    
+    /**
+     * requirejs配置文件中的资源引用使用到的特定构造函数
+     * @param sourceAddr
+     * @param requiredCfgPathKey  配置文件的paths中的key
+     */
+    public Reference(String sourceAddr, String requiredCfgPathKey) {
+        super();
+        this.sourceAddr = sourceAddr;
+        this.requiredCfgPathKey = requiredCfgPathKey;
+    }
+
+
 
     public Resource getResource() {
         return resource;
@@ -178,6 +214,22 @@ public class Reference {
 
     public void setTemp(boolean temp) {
         this.temp = temp;
+    }
+
+    public boolean isRequirejsDataMain() {
+        return requirejsDataMain;
+    }
+
+    public void setRequirejsDataMain(boolean requirejsDataMain) {
+        this.requirejsDataMain = requirejsDataMain;
+    }
+
+    public String getRequiredCfgPathKey() {
+        return requiredCfgPathKey;
+    }
+
+    public void setRequiredCfgPathKey(String requiredCfgPathKey) {
+        this.requiredCfgPathKey = requiredCfgPathKey;
     }
 
     

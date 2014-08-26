@@ -7,6 +7,7 @@ import cn.focus.m.plugin.roselyne.compress.ResourceCompressor;
 import cn.focus.m.plugin.roselyne.processor.HTMLResourceProcessor;
 import cn.focus.m.plugin.roselyne.processor.ImageResourceProcessor;
 import cn.focus.m.plugin.roselyne.processor.JSResourceProcessor;
+import cn.focus.m.plugin.roselyne.processor.RequireJSResourceProcessor;
 import cn.focus.m.plugin.roselyne.processor.ResourceProcessException;
 import cn.focus.m.plugin.roselyne.processor.ResourceProcessor;
 import cn.focus.m.plugin.roselyne.processor.StyleResourceProcessor;
@@ -44,6 +45,8 @@ public class ResourceProcessHandler {
     
     private ResourceProcessor imageProcessor;
     
+    private ResourceProcessor requireJSProcessor;
+    
     public ResourceProcessHandler(ResourceResolveSupport resolveSupport, ResourceAcquirerFactory resourceAcquirerFactory,
             ResourceCompressor resourceCompressor, List<Resource> resources, List<MagicResource> magicResources) {
         this.resourceResolveSupport = resolveSupport;
@@ -66,6 +69,7 @@ public class ResourceProcessHandler {
         jsProcessor = new JSResourceProcessor(resourceResolveSupport, resourceAcquirerFactory, resourceCompressor);
         styleProcessor = new StyleResourceProcessor(resourceResolveSupport, resourceAcquirerFactory, resourceCompressor);
         imageProcessor = new ImageResourceProcessor(resourceResolveSupport, resourceAcquirerFactory, resourceCompressor);
+        requireJSProcessor = new RequireJSResourceProcessor(resourceResolveSupport, resourceAcquirerFactory, resourceCompressor);
         
     }
     
@@ -111,6 +115,11 @@ public class ResourceProcessHandler {
      * @return
      */
     public ResourceProcessor chooseProcessor(Resource resource) {
+        
+        if (resource.isRequirejsDataMain()) {
+            return requireJSProcessor;
+        }
+        
         String sourceAddr = resource.getSourceAddr();
         String extension = FileUtils.extension(sourceAddr).toLowerCase();
         

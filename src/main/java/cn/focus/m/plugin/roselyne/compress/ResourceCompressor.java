@@ -146,6 +146,7 @@ public class ResourceCompressor {
                     } else {
                         System.out.println("\n[ERROR] " + err);
                     }
+                    System.out.println(resource.toString());
                     throw new ResourceCompressException();
                 }
             } else {

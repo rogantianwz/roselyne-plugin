@@ -116,6 +116,10 @@ public abstract class AbstractResourceProcessor implements ResourceProcessor{
                     continue;
                 }
                 
+                if (reference.isRequirejsDataMain()) {
+                    referenceResource.setRequirejsDataMain(true);
+                }
+                
                 //e.
                 boolean processResult = resourceProcess(referenceResource, handler);
                 if (!processResult) {
@@ -402,10 +406,13 @@ public abstract class AbstractResourceProcessor implements ResourceProcessor{
                  }
                 } else {
                     String releaseAddr = ref.getResource().getReleaseAddr();
+                    if (ref.isRequirejsDataMain() && releaseAddr.endsWith(".js")) {
+                        releaseAddr = releaseAddr.substring(0, releaseAddr.lastIndexOf("."));
+                    }
                     StringBuilder sb = new StringBuilder("引用替换【").append(splitedSources.get(splitedSourcesIndex))
                             .append("】==》【").append(releaseAddr).append("】");
                     addMessage(resource, new Message(MessageType.INFO, sb.toString()));
-                    splitedSources.set(splitedSourcesIndex, ref.getResource().getReleaseAddr());
+                    splitedSources.set(splitedSourcesIndex, releaseAddr);
                 }
             }
             for (String str : splitedSources) {

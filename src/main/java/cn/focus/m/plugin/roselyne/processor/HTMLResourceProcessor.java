@@ -50,7 +50,7 @@ public class HTMLResourceProcessor extends AbstractResourceProcessor {
     private static String ATTRIBUTE_SRC = "\\bsrc\\s*?=\\s*?('[^']+'|\"[^\"]+\"|[^\\s\\/>]+)";
     
     /**
-     * 查找类似<script ... src="..." />的js引用中的src值，
+     * 查找类似&lt;script ... src="..." /&gt;的js引用中的src值，
      * 参考测试函数main4(..)
      */
     private static Pattern PJSSRC = Pattern.compile(ATTRIBUTE_SRC);
@@ -59,6 +59,14 @@ public class HTMLResourceProcessor extends AbstractResourceProcessor {
      * 查找<(img|embed|audio|video|object)... src="..." />中引用的src值
      */
     private static Pattern MONDAYSRC = Pattern.compile(ATTRIBUTE_SRC);
+    
+    private static String ATTRIBUTE_DATA_MAIN = "\\bdata-main\\s*?=\\s*?('[^']+'|\"[^\"]+\"|[^\\s\\/>]+)";
+    
+    /**
+     * 查找类似&lt;script data-main="..." /&gt;的js引用中的data-main值，为了支持require.js
+     */
+    private static Pattern PJSDATAMAIN = Pattern.compile(ATTRIBUTE_DATA_MAIN);
+    
     
     private static String ATTRIBUTE_HREF = "\\bhref\\s*?=\\s*?('[^']+'|\"[^\"]+\"|[^\\s\\/>]+)";
     
@@ -206,15 +214,29 @@ public class HTMLResourceProcessor extends AbstractResourceProcessor {
         SG scriptTag = mr.getScriptTag();
         SG scriptContent = mr.getScriptConent();
         Reference ref = null;
+        Reference dataMainRef = null;
         
         if (null == scriptContent) {
             ref = extractRefFromTag(resource, PJSSRC, scriptTag);
+            //处理requirejs的data-main
+            if (null != ref) {
+                dataMainRef = extractRefFromTag(resource, PJSDATAMAIN, scriptTag);
+            }
         } else {
             ref = genTempRef(scriptContent, "js");
         }
         
         if (null != ref) {
             addReference(refs, ref);
+        }
+        
+        if (null != dataMainRef) {
+            String dataMainUrl = dataMainRef.getSourceAddr();
+            if (!dataMainUrl.endsWith(".js")) {
+                dataMainRef.setSourceAddr(dataMainUrl + ".js");
+            }
+            dataMainRef.setRequirejsDataMain(true);
+            addReference(refs, dataMainRef);
         }
     }
     

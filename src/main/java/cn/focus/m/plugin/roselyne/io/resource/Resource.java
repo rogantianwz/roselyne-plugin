@@ -23,6 +23,9 @@ public class Resource {
     private boolean done;
     
     private String versionCode;
+    
+    //标明该资源是否是一个requirejs配置文件
+    private boolean requirejsDataMain = false;
 
     public String getReleaseAddr() {
         return releaseAddr;
@@ -134,5 +137,13 @@ public class Resource {
         return "Resource [sourceAddr=" + sourceAddr + ", releaseAddr=" + releaseAddr + ", outputAddr=" + outputAddr
                 + ", fetchAddr=" + fetchAddr + ", tempAddr=" + tempAddr + ", md5=" + md5 + ", md5len=" + md5len
                 + ", temp=" + temp + ", done=" + done + ", versionCode=" + versionCode + "]";
+    }
+
+    public boolean isRequirejsDataMain() {
+        return requirejsDataMain;
+    }
+
+    public void setRequirejsDataMain(boolean requirejsDataMain) {
+        this.requirejsDataMain = requirejsDataMain;
     }
 }

@@ -325,11 +325,11 @@ public final class RoselyneFileUtils {
         /*String currentPath = "http://www.baidu.com/a/b/1.jpg";
         String relativePath = "../../2.css";*/
         String currentPath = "http://include.aifcdn.com/touchweb/2014_20_03_1/base/css/Base.css";
-        //String relativePath = "../../touch/img/base_i_s.png";
+        String relativePath = "../../touch/img/base_i_s.png";
         //String relativePath = "touch/img/base_i_s.png";
         //String relativePath = "/img/base_i_s.png";
         //String relativePath = "./img/base_i_s.png";
-        String relativePath = "http://www.baidu.com/img/base_i_s.png";
+        //String relativePath = "http://www.baidu.com/img/base_i_s.png";
         System.out.println(normalizPathIfNeed(currentPath, relativePath));
     }
     

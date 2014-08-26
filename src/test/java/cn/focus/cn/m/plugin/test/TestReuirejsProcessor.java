@@ -63,8 +63,9 @@ public class TestReuirejsProcessor {
        magicResource.setMd5(true);
        List<Pattern> includes = new ArrayList<Pattern>();
        includes.add(Pattern.compile("http://192.168.242.44/sceapp/focus_static/wap/(.*\\.js)"));
-       //includes.add(Pattern.compile("http://192.168.242.44/sceapp/focus_static/wap/(.*\\.png)"));
-       //includes.add(Pattern.compile("http://192.168.242.44/sceapp/focus_static/wap/(.*\\.css)"));
+       includes.add(Pattern.compile("http://192.168.242.44/sceapp/focus_static/wap/(.*\\.png)"));
+       includes.add(Pattern.compile("http://192.168.242.44/sceapp/focus_static/wap/(.*\\.jpg)"));
+       includes.add(Pattern.compile("http://192.168.242.44/sceapp/focus_static/wap/(.*\\.css)"));
                
        magicResource.setIncludePatterns(includes);
        magicResource.setExcludePatterns(null);
